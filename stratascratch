@@ -1,0 +1,304 @@
+Site: https://platform.stratascratch.com/
+
+Q:Meta/Facebook has developed a new programing language called Hack.To measure the popularity of Hack they ran a survey with their employees. The survey included data on previous programming familiarity as well as the number of years of experience, age, gender and most importantly satisfaction with Hack. Due to an error location data was not collected, but your supervisor demands a report showing average popularity of Hack by office location. Luckily the user IDs of employees completing the surveys were stored.
+Based on the above, find the average popularity of the Hack per office location.
+Output the location along with the average popularity.
+Query:
+SELECT location, avg(popularity)
+FROM facebook_employees e
+    JOIN facebook_hack_survey hs ON e.id = hs.employee_id
+GROUP BY location
+
+Q:Find the last time each bike was in use. Output both the bike number and the date-timestamp of the bike's last use (i.e., the date-time the bike was returned). Order the results by bikes that were most recently used.
+Query:
+SELECT bike_number, max(end_time) as bike_last_use
+FROM dc_bikeshare_q1_2012
+GROUP BY bike_number
+ORDER BY end_time DESC;
+
+Q:Find the most profitable company from the financial sector. Output the result along with the continent.
+Query:
+SELECT company, continent
+FROM forbes_global_2010_2014
+GROUP BY continent
+LIMIT 1
+
+Q:Write a query that calculates the difference between the highest salaries found in the marketing and engineering departments. Output just the absolute difference in salaries.
+Query:
+SELECT ABS(MAX(CASE WHEN department = 'marketing' THEN salary end) -
+       MAX(CASE WHEN department = 'engineering' THEN salary end)) as salary_dif
+FROM db_employee e
+JOIN db_dept d ON e.department_id = d.id
+
+
+Q:Find order details made by Jill and Eva.
+Consider the Jill and Eva as first names of customers.
+Output the order date, details and cost along with the first name.
+Order records based on the customer id in ascending order.
+Query:
+SELECT c.first_name, o.order_date, o.order_details, o.total_order_cost
+FROM customers c
+    JOIN orders o ON c.id = o.cust_id
+WHERE first_name IN ('Jill','Eva')
+
+Q:Find how many times each artist appeared on the Spotify ranking list
+Output the artist name along with the corresponding number of occurrences.
+Order records by the number of occurrences in descending order.
+Query:
+SELECT artist,count(position) as occurrences
+FROM spotify_worldwide_daily_song_ranking
+GROUP BY artist
+ORDER BY occurrences DESC
+
+Q:Count the number of user events performed by MacBookPro users.
+Output the result along with the event name.
+Sort the result based on the event count in the descending order.
+Query:
+SELECT event_name, count(event_name)
+FROM playbook_events
+WHERE device = 'macbook pro'
+GROUP BY event_name
+
+Q:Find all posts which were reacted to with a heart. For such posts output all columns from facebook_posts table.
+Query:
+SELECT * 
+FROM facebook_posts
+WHERE post_id IN (select post_id from facebook_reactions WHERE reaction = 'heart')
+
+Q:Compare each employee's salary with the average salary of the corresponding department.
+Output the department, first name, and salary of employees along with the average salary of that department.
+Query:
+SELECT department, first_name, salary , avg(salary) OVER(partition by department) as avg_salary
+FROM employee
+
+Q:Find the activity date and the pe_description of facilities with the name 'STREET CHURROS' and with a score of less than 95 points.
+Query:
+SELECT activity_date, pe_description
+FROM los_angeles_restaurant_health_inspections
+WHERE facility_name = 'STREET CHURROS'
+
+Q:Find libraries who haven't provided the email address in circulation year 2016 but their notice preference definition is set to email.
+Output the library code.
+Query:
+SELECT DISTINCT home_library_code 
+FROM library_usage
+WHERE notice_preference_definition = 'email' and provided_email_address = 0
+
+Q:Find the base pay for Police Captains.
+Output the employee name along with the corresponding base pay.
+Query:
+SELECT employeename, basepay 
+FROM sf_public_salaries
+WHERE jobtitle = "CAPTAIN III (POLICE DEPARTMENT)"
+
+Q:Count the number of movies that Abigail Breslin was nominated for an oscar.
+Query:
+SELECT COUNT(*) as nominated_for_oscar
+FROM oscar_nominees
+WHERE nominee = "Abigail Breslin"
+
+Q:Find the details of each customer regardless of whether the customer made an order. Output the customer's first name, last name, and the city along with the order details.
+You may have duplicate rows in your results due to a customer ordering several of the same items. Sort records based on the customer's first name and the order details in ascending order.
+Query:
+SELECT c.first_name, c.last_name, c.city, o.order_details 
+FROM customers c
+    LEFT JOIN orders o ON c.id = o.cust_id
+ORDER BY first_name, order_details
+
+Q:Find the average number of bathrooms and bedrooms for each city’s property types. Output the result along with the city name and the property type.
+Query:
+SELECT city, property_type, avg(bathrooms) as avg_bath, avg(bedrooms) as avg_bed
+FROM airbnb_search_details
+GROUP BY city, property_type
+
+Q:We have a table with employees and their salaries, however, some of the records are old and contain outdated salary information. Find the current salary of each employee assuming that salaries increase each year. Output their id, first name, last name, department ID, and current salary. Order your list by employee ID in ascending order.
+Query:
+SELECT DISTINCT id,first_name,last_name,department_id, MAX(salary)
+FROM ms_employee_salary
+GROUP BY id
+
+Q:Find the rate of processed tickets for each type.
+Query:
+SELECT type, SUM(processed)/COUNT(*)
+FROM facebook_complaints
+GROUP BY type;
+
+Q:You have been asked to find the job titles of the highest-paid employees.
+Your output should include the highest-paid title or multiple titles with the same salary.
+Query:
+SELECT worker_title as best_paid_title
+FROM worker w
+    JOIN title t ON w.worker_id = t.worker_ref_id
+WHERE salary IN (SELECT max(salary)
+                               FROM worker);
+
+Q:What were the top 10 ranked songs in 2010?
+Output the rank, group name, and song name but do not show the same song twice.
+Sort the result based on the year_rank in ascending order.
+Query:
+SELECT DISTINCT year_rank,group_name,song_name
+FROM billboard_top_100_year_end
+WHERE year = 2010
+LIMIT 10
+
+Q:Find the customer with the highest daily total order cost between 2019-02-01 to 2019-05-01. If customer had more than one order on a certain day, sum the order costs on daily basis. Output customer's first name, total cost of their items, and the date.
+For simplicity, you can assume that every first name in the dataset is unique.
+Query:
+SELECT c.first_name, o.order_date, sum(o.total_order_cost) as total_cost
+FROM customers c 
+    JOIN orders o ON c.id = o.cust_id
+WHERE order_date between '2019-02-01' AND '2019-05-01'
+GROUP BY o.order_date, c.first_name
+ORDER BY total_cost desc
+LIMIT 1
+
+Q:Find the highest target achieved by the employee or employees who works under the manager id 13. Output the first name of the employee and target achieved. The solution should show the highest target achieved under manager_id=13 and which employee(s) achieved it.
+Query:
+SELECT first_name, target 
+FROM salesforce_employees
+WHERE manager_id = 13
+ORDER BY target desc
+LIMIT 3
+
+Q:Find all wineries which produce wines by possessing aromas of plum, cherry, rose, or hazelnut. To make it more simple, look only for singular form of the mentioned aromas. HINT: if one of the specified words is just a substring of another word, this should not be a hit, but a miss.
+Example Description: Hot, tannic and simple, with cherry jam and currant flavors accompanied by high, tart acidity and chile-pepper alcohol heat.
+Therefore the winery Bella Piazza is expected in the results.
+Query:
+SELECT distinct winery
+FROM winemag_p1
+WHERE LOWER(description) REGEXP '(plum|rose|cherry|hazelnut)([^a-z])'
+
+Q:Calculate the total revenue from each customer in March 2019. Include only customers who were active in March 2019.
+Output the revenue along with the customer id and sort the results based on the revenue in descending order.
+Query:
+SELECTcust_id, sum(total_order_cost)
+FROM orders
+WHERE order_date between "2019-03-01" AND "2019-03-31"
+GROUP BY cust_id
+
+Q:Find the review_text that received the highest number of  'cool' votes.
+Output the business name along with the review text with the highest number of 'cool' votes.
+Query:
+SELECT business_name, review_text
+FROM yelp_reviews
+WHERE cool = (SELECT MAX(cool) 
+                	  FROM yelp_reviews)
+Q:Find the date with the highest total energy consumption from the Meta/Facebook data centers. Output the date along with the total energy consumption across all data centers.
+Query:
+WITH T AS
+(SELECT date, consumption
+FROM fb_eu_energy
+UNION ALL
+SELECT date, consumption
+FROM fb_asia_energy
+UNION ALL
+SELECT date, consumption
+FROM fb_na_energy
+ORDER BY date)
+SELECT date,sum(consumption) as total_energy
+FROM T
+GROUP BY date
+ORDER BY total_energy DESC
+LIMIT 2
+
+Q:Find the number of apartments per nationality that are owned by people under 30 years old.
+Output the nationality along with the number of apartments.
+Sort records by the apartments count in descending order.
+Query:
+SELECT nationality,count(distinct unit_id)
+FROM airbnb_hosts h
+    JOIN airbnb_units u ON h.host_id = u.host_id
+WHERE age < 30 and u.unit_type = 'Apartment'
+GROUP BY nationality
+
+Q:Find the 3 most profitable companies in the entire world.
+Output the result along with the corresponding company name.
+Sort the result based on profits in descending order.
+Query:
+SELECT company,profits 
+FROM forbes_global_2010_2014
+ORDER BY profits DESC
+LIMIT 3
+
+Q: Find the Olympics with the highest number of athletes. The Olympics game is a combination of the year and the season, and is found in the 'games' column. Output the Olympics along with the corresponding number of athletes.
+Query:
+SELECT games, count(DISTINCT name) as athletes
+FROM olympics_athletes_events
+GROUP BY games
+ORDER BY athletes DESC
+LIMIT 1
+
+Q:Classify each business as either a restaurant, cafe, school, or other.
+
+•	A restaurant should have the word 'restaurant' in the business name.
+•	A cafe should have either 'cafe', 'café', or 'coffee' in the business name.
+•	A school should have the word 'school' in the business name.
+•	All other businesses should be classified as 'other'.
+Output the business name and their classification.
+Query:
+SELECT business_name,
+    CASE
+        WHEN business_name like '%restaurant%' THEN 'restaurant'
+        WHEN business_name like '%school%' THEN 'school'
+        WHEN business_name like '%café%' THEN 'cafe'
+        WHEN business_name like '%coffee%' THEN 'cafe'
+        WHEN business_name like '%cafe%' THEN 'cafe'
+        ELSE 'other' end as classification
+FROM sf_restaurant_health_violations
+GROUP BY binary business_name
+
+Q:Write a query that'll identify returning active users. A returning active user is a user that has made a second purchase within 7 days of any other of their purchases. Output a list of user_ids of these returning active users.
+Query:
+SELECT DISTINCT user_id 
+FROM (SELECT *, 
+    	LEAD(created_at) OVER(partition by user_id order by created_at) as next_purchase
+    	FROM amazon_transactions) as data
+WHERE DATEDIFF(next_purchase, created_at) <= 7
+
+Q:Find the top 5 businesses with most reviews. Assume that each row has a unique business_id such that the total reviews for each business is listed on each row. Output the business name along with the total number of reviews and order your results by the total reviews in descending order.
+Query:
+SELECT name, review_count
+FROM yelp_business
+GROUP BY review_count
+ORDER BY review_count DESC
+LIMIT 5
+
+Q:Rank guests based on the number of messages they've exchanged with the hosts. Guests with the same number of messages as other guests should have the same rank. Do not skip rankings if the preceding rankings are identical.
+Output the rank, guest id, and number of total messages they've sent. Order by the highest number of total messages first.
+Query:
+SELECT id_guest, dense_rank() OVER (ORDER BY SUM(n_messages) DESC) as ranks, SUM(n_messages) as total_messages
+FROM airbnb_contacts
+GROUP BY id_guest
+ORDER BY total_messages DESC
+
+Q:You're given a dataset of health inspections. Count the number of violation in an inspection in 'Roxanne Cafe' for each year. If an inspection resulted in a violation, there will be a value in the 'violation_id' column. Output the number of violations by year in ascending order.
+Query:
+SELECT EXTRACT(YEAR FROM inspection_date) as year, COUNT(violation_id) as n_inspections
+FROM sf_restaurant_health_violations
+WHEREviolation_id is not null and business_name = "Roxanne Cafe"
+GROUP BY year
+
+Q:Find songs that have ranked in the top position. Output the track name and the number of times it ranked at the top. Sort your records by the number of times the song was in the top position in descending order.
+Query:
+SELECT trackname, COUNT(position) as times_top1
+FROM spotify_worldwide_daily_song_ranking
+WHERE position = 1
+GROUP BY trackname
+ORDER BY times_top1 DESC
+
+Q:Find employees who are earning more than their managers. Output the employee's first name along with the corresponding salary.
+Query:
+SELECT first_name as employee_name, salary as employee_salary
+FROM employee
+ORDER BY salary desc
+LIMIT 1
+
+
+Q:Find the top 5 states with the most 5 star businesses. Output the state name along with the number of 5-star businesses and order records by the number of 5-star businesses in descending order. In case there are ties in the number of businesses, return all the unique states. If two states have the same result, sort them in alphabetical order.
+Query:
+SELECT state, count(stars) as stars_
+FROM yelp_business
+WHERE stars = 5
+GROUP BY state
+ORDER BY stars_ desc,state
+LIMIT 6
